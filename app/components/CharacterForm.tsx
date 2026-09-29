@@ -17,6 +17,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
     { id: "o2", name: "服设2", images: [] },
     { id: "o3", name: "服设3", images: [] },
   ]);
+  const [annualArtworks, setAnnualArtworks] = useState<string[]>(character?.annualArtworks || ["", "", "", "", "", ""]);
   const [artworks, setArtworks] = useState<Artwork[]>(character?.artworks || []);
   const [textForm, setTextForm] = useState({
     name: character?.name || "",
@@ -42,6 +43,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
     const file = e.target.files?.[0];
     if (!file) return;
     try { setPortraitUrl(await uploadImage(file)); } catch { alert("上传失败"); }
+    e.target.value = "";
   }
 
   function addOutfit() {
@@ -63,6 +65,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
       const urls = await Promise.all(files.map(uploadImage));
       setOutfits((prev) => prev.map((o, i) => i === outfitIdx ? { ...o, images: [...o.images, ...urls] } : o));
     } catch { alert("上传失败"); }
+    e.target.value = "";
   }
 
   function removeOutfitImage(outfitIdx: number, imgIdx: number) {
@@ -75,12 +78,28 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
     if (artworks.length + files.length > 9) { alert("稿件最多 9 张"); return; }
     try {
       const urls = await Promise.all(files.map(uploadImage));
-      setArtworks((prev) => [...prev, ...urls.map((url, i) => ({ id: `a${Date.now()}-${i}`, url }))]);
+      setArtworks((prev) => [...prev, ...urls.map((url, i) => ({ id: `a${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`, url }))]);
     } catch { alert("上传失败"); }
+    // 重置 input value，确保可以再次选择同一文件
+    e.target.value = "";
   }
 
   function removeArtwork(idx: number) {
     setArtworks((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  async function handleAnnualUpload(idx: number, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const url = await uploadImage(file);
+      setAnnualArtworks((prev) => prev.map((u, i) => i === idx ? url : u));
+    } catch { alert("上传失败"); }
+    e.target.value = "";
+  }
+
+  function removeAnnualArtwork(idx: number) {
+    setAnnualArtworks((prev) => prev.map((u, i) => i === idx ? "" : u));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -91,6 +110,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
       portrait: portraitUrl,
       outfits,
       artworks,
+      annualArtworks,
     });
     setSaving(false);
   }
@@ -201,10 +221,36 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
             </div>
           </div>
 
+          {/* 年度稿件 */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-600">年度稿件（6 格 4:3）</label>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {annualArtworks.map((url, ai) => (
+                <div key={ai} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                  {url ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={`年度稿件 ${ai + 1}`} className="h-full w-full object-cover" />
+                      <button type="button" onClick={() => removeAnnualArtwork(ai)}
+                        className="absolute right-0 top-0 rounded-bl-lg bg-black/50 px-1.5 py-0.5 text-xs text-white">✕</button>
+                    </>
+                  ) : (
+                    <label className="flex h-full w-full cursor-pointer items-center justify-center text-gray-300 hover:border-pink-300 hover:text-pink-300">
+                      <span className="text-xs">+ 上传</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAnnualUpload(ai, e)} />
+                    </label>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* 按钮 */}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onCancel} className="rounded-full border border-gray-200 px-5 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={saving} className="rounded-full bg-pink-400 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-500 disabled:opacity-50">
+            <button type="submit" disabled={saving} className="rounded-full bg-pink-200 px-5 py-2 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300 disabled:opacity-50">
               {saving ? "保存中..." : "保存"}
             </button>
           </div>

@@ -38,7 +38,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-gray-50 to-pink-50/30 px-4">
+    <main className="flex min-h-screen items-center justify-center bg-white px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <span className="text-4xl">✦</span>
@@ -93,14 +93,14 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-pink-400 py-2.5 text-sm font-medium text-white transition-colors hover:bg-pink-500 disabled:opacity-50"
+            className="w-full rounded-full bg-pink-200 py-2.5 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300 disabled:opacity-50"
           >
             {loading ? "注册中..." : "注册并登录"}
           </button>
 
           <p className="text-center text-sm text-gray-400">
             已有账号？{" "}
-            <Link href="/login" className="text-pink-400 hover:underline">
+            <Link href="/login" className="text-pink-300 hover:underline">
               直接登录
             </Link>
           </p>

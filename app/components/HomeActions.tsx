@@ -36,7 +36,7 @@ export default function HomeActions({ user }: HomeActionsProps) {
     <>
       <button
         onClick={() => setShowForm(true)}
-        className="rounded-full bg-pink-400 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-500"
+        className="rounded-full bg-pink-200 px-5 py-2 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300"
       >
         + 新建角色
       </button>

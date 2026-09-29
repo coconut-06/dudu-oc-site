@@ -88,14 +88,14 @@ export default function AdminPage() {
 
   if (userChecked && !user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-gray-50 to-pink-50/30 px-4">
+      <main className="flex min-h-screen items-center justify-center bg-white px-4">
         <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
           <span className="text-4xl">🔒</span>
           <h1 className="mt-4 text-xl font-bold text-gray-800">需要登录</h1>
           <p className="mt-2 text-sm text-gray-500">登录后才能创建和管理你的 OC 角色</p>
           <div className="mt-6 flex flex-col gap-2">
-            <a href="/login" className="rounded-full bg-pink-400 py-2.5 text-sm font-medium text-white transition-colors hover:bg-pink-500">去登录</a>
-            <a href="/register" className="rounded-full border border-pink-200 py-2.5 text-sm text-pink-500 transition-colors hover:bg-pink-50">注册新账号</a>
+            <a href="/login" className="rounded-full bg-pink-200 py-2.5 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300">去登录</a>
+            <a href="/register" className="rounded-full border border-pink-200 py-2.5 text-sm text-pink-400 transition-colors hover:bg-pink-50">注册新账号</a>
             <a href="/" className="mt-2 text-xs text-gray-400 hover:text-gray-500">← 回到首页</a>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-pink-50/30">
+    <main className="min-h-screen bg-white">
       <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold text-gray-800">{user?.isAdmin ? "全部角色" : "我的角色"}</h1>
             <p className="mt-1 text-sm text-gray-400">{user?.isAdmin ? "管理员可以管理所有用户创建的角色" : "只有你自己创建的角色会显示在这里"}</p>
           </div>
-          <button onClick={handleNew} className="rounded-full bg-pink-400 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-500">+ 新建角色</button>
+          <button onClick={handleNew} className="rounded-full bg-pink-200 px-5 py-2 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300">+ 新建角色</button>
         </div>
 
         {loading ? (
@@ -163,7 +163,7 @@ export default function AdminPage() {
                 <div className="flex shrink-0 gap-2">
                   {canEdit(c) ? (
                     <>
-                      <button onClick={() => handleEdit(c)} className="rounded-lg border border-pink-200 px-3 py-1.5 text-sm text-pink-500 transition-colors hover:bg-pink-50">编辑</button>
+                      <button onClick={() => handleEdit(c)} className="rounded-lg border border-pink-200 px-3 py-1.5 text-sm text-pink-400 transition-colors hover:bg-pink-50">编辑</button>
                       <button onClick={() => handleDelete(c.id)} className="rounded-lg border border-rose-200 px-3 py-1.5 text-sm text-rose-500 transition-colors hover:bg-rose-50">删除</button>
                     </>
                   ) : (

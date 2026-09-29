@@ -51,6 +51,12 @@ export function getDb() {
       );
     `);
 
+    // 检查是否需要加 annual_artworks 列
+    const hasAnnualCol = cols.some((c) => c.name === "annual_artworks");
+    if (cols.length > 0 && hasNewSchema && !hasAnnualCol) {
+      db.exec("ALTER TABLE characters ADD COLUMN annual_artworks TEXT DEFAULT '[]'");
+    }
+
     // 如果角色表为空，插入一条示例数据
     const count = db.prepare("SELECT COUNT(*) as n FROM characters").get() as { n: number };
     if (count.n === 0) {
@@ -74,16 +80,18 @@ function seedDb(database: Database.Database) {
       { id: "o3", name: "服设3", images: [] },
     ],
     artworks: [],
+    annualArtworks: ["", "", "", "", "", ""],
     creatorId: "",
   };
 
   database.prepare(`
-    INSERT INTO characters (id, name, age, anchor, world_description, portrait, outfits, artworks, creator_id)
-    VALUES (@id, @name, @age, @anchor, @world_description, @portrait, @outfits, @artworks, '')
+    INSERT INTO characters (id, name, age, anchor, world_description, portrait, outfits, artworks, annual_artworks, creator_id)
+    VALUES (@id, @name, @age, @anchor, @world_description, @portrait, @outfits, @artworks, @annual_artworks, '')
   `).run({
     ...sample,
     outfits: JSON.stringify(sample.outfits),
     artworks: JSON.stringify(sample.artworks),
+    annual_artworks: JSON.stringify(sample.annualArtworks),
   });
 }
 
@@ -117,8 +125,8 @@ export function createCharacter(
 ): Character {
   const id = c.id || generateId(c.name);
   getDb().prepare(`
-    INSERT INTO characters (id, name, age, anchor, world_description, portrait, outfits, artworks, creator_id)
-    VALUES (@id, @name, @age, @anchor, @world_description, @portrait, @outfits, @artworks, @creator_id)
+    INSERT INTO characters (id, name, age, anchor, world_description, portrait, outfits, artworks, annual_artworks, creator_id)
+    VALUES (@id, @name, @age, @anchor, @world_description, @portrait, @outfits, @artworks, @annual_artworks, @creator_id)
   `).run({
     id,
     name: c.name,
@@ -128,6 +136,7 @@ export function createCharacter(
     portrait: c.portrait || "",
     outfits: JSON.stringify(c.outfits || []),
     artworks: JSON.stringify(c.artworks || []),
+    annual_artworks: JSON.stringify(c.annualArtworks || ["", "", "", "", "", ""]),
     creator_id: c.creatorId || "",
   });
   return getCharacterById(id)!;
@@ -140,7 +149,7 @@ export function updateCharacter(id: string, c: Partial<Character>): boolean {
   getDb().prepare(`
     UPDATE characters SET
       name = @name, age = @age, anchor = @anchor, world_description = @world_description,
-      portrait = @portrait, outfits = @outfits, artworks = @artworks
+      portrait = @portrait, outfits = @outfits, artworks = @artworks, annual_artworks = @annual_artworks
     WHERE id = @id
   `).run({
     id,
@@ -151,6 +160,7 @@ export function updateCharacter(id: string, c: Partial<Character>): boolean {
     portrait: merged.portrait || "",
     outfits: JSON.stringify(merged.outfits || []),
     artworks: JSON.stringify(merged.artworks || []),
+    annual_artworks: JSON.stringify(merged.annualArtworks || ["", "", "", "", "", ""]),
   });
   return true;
 }
@@ -239,6 +249,7 @@ function rowToCharacter(row: any): Character & { creatorNickname?: string } {
     portrait: row.portrait || "",
     outfits: JSON.parse(row.outfits || "[]") as OutfitSet[],
     artworks: JSON.parse(row.artworks || "[]") as Artwork[],
+    annualArtworks: JSON.parse(row.annual_artworks || "[]") as string[],
     creatorId: row.creator_id || "",
     creatorNickname: row.creator_nickname || undefined,
   };
@@ -246,6 +257,7 @@ function rowToCharacter(row: any): Character & { creatorNickname?: string } {
 
 function generateId(name: string): string {
   const ts = Date.now().toString(36).slice(-4);
-  const base = name.replace(/[^a-zA-Z0-9\u4e00-\u9fff]/g, "").slice(0, 4) || "oc";
-  return `${base.toLowerCase()}-${ts}`;
+  // 只保留 ASCII 字母数字，避免中文 ID 导致路由编码问题
+  const base = name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toLowerCase() || "oc";
+  return `${base}-${ts}`;
 }

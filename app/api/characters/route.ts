@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, age, anchor, worldDescription, portrait, outfits, artworks } = body;
+    const { name, age, anchor, worldDescription, portrait, outfits, artworks, annualArtworks } = body;
 
     if (!name || !age || !anchor || !worldDescription) {
       return NextResponse.json({ error: "缺少必填字段（姓名、年龄、锚点、世界观简述）" }, { status: 400 });
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       portrait: portrait || "",
       outfits: outfits || [],
       artworks: artworks || [],
+      annualArtworks: annualArtworks || ["", "", "", "", "", ""],
       creatorId: user.id,
     });
 

@@ -12,6 +12,12 @@ export interface Artwork {
   title?: string;
 }
 
+// ── 年度稿件 ──
+export interface AnnualArtwork {
+  id: string;       // 格子ID，固定 0-5
+  url: string;      // 图片URL，空字符串表示未上传
+}
+
 // ── 角色 ──
 export interface Character {
   id: string;
@@ -22,6 +28,7 @@ export interface Character {
   portrait: string;          // 立绘（人设整体图片）
   outfits: OutfitSet[];       // 服设套装（至少3套，可加）
   artworks: Artwork[];       // 稿件展示（最多9张，用于九宫格）
+  annualArtworks: string[];  // 年度稿件（固定6张，4:3比例）
   creatorId: string;
 }
 
@@ -40,6 +47,7 @@ export const sampleCharacters: Character[] = [
       { id: "o3", name: "礼服", images: [] },
     ],
     artworks: [],
+    annualArtworks: ["", "", "", "", "", ""],
     creatorId: "",
   },
 ];
