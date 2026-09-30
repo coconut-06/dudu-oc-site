@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllCharacters } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { normalizeAnnualArtworks } from "@/lib/characters";
 import HomeActions from "@/app/components/HomeActions";
 import HomeAnnualModule from "@/app/components/HomeAnnualModule";
 
@@ -13,7 +14,7 @@ export default async function Home() {
     id: c.id,
     name: c.name,
     portrait: c.portrait,
-    annualArtworks: c.annualArtworks || ["", "", "", "", "", ""],
+    annualArtworks: normalizeAnnualArtworks(c.annualArtworks),
     creatorId: c.creatorId,
   }));
 
@@ -55,11 +56,11 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* 左右分区：左侧角色模块 / 右侧年度稿件模块 */}
+      {/* 左右对称分区：左侧角色模块 / 右侧年度稿件模块 */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-8 lg:grid-cols-2">
           {/* ── 左侧：角色模块（新建角色 + 角色卡片展示） ── */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             {characters.length === 0 ? (
               /* 空状态：整个区域居中显示新建角色按钮 */
               <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
@@ -74,8 +75,8 @@ export default async function Home() {
               </div>
             ) : (
               <>
-                {/* 角色区头部：标题 + 新建角色按钮 */}
-                <div className="mb-5 flex items-center justify-between">
+                {/* 角色区头部：标题 + 新建角色按钮（按钮紧贴标题右侧） */}
+                <div className="mb-5 flex items-center gap-3">
                   <h2 className="text-sm font-semibold tracking-widest text-gray-400">角 色 区</h2>
                   {user && (
                     <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />

@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
 import type { Character, OutfitSet, Artwork } from "@/lib/characters";
+import { normalizeAnnualArtworks } from "@/lib/characters";
 
 // ── 本地 SQLite 数据库（开发用）──
 // 上线后切换为 Vercel Postgres，只需改这个文件
@@ -80,7 +81,7 @@ function seedDb(database: Database.Database) {
       { id: "o3", name: "服设3", images: [] },
     ],
     artworks: [],
-    annualArtworks: ["", "", "", "", "", ""],
+    annualArtworks: ["", "", "", "", "", "", "", "", ""],
     creatorId: "",
   };
 
@@ -136,7 +137,7 @@ export function createCharacter(
     portrait: c.portrait || "",
     outfits: JSON.stringify(c.outfits || []),
     artworks: JSON.stringify(c.artworks || []),
-    annual_artworks: JSON.stringify(c.annualArtworks || ["", "", "", "", "", ""]),
+    annual_artworks: JSON.stringify(normalizeAnnualArtworks(c.annualArtworks)),
     creator_id: c.creatorId || "",
   });
   return getCharacterById(id)!;
@@ -160,7 +161,7 @@ export function updateCharacter(id: string, c: Partial<Character>): boolean {
     portrait: merged.portrait || "",
     outfits: JSON.stringify(merged.outfits || []),
     artworks: JSON.stringify(merged.artworks || []),
-    annual_artworks: JSON.stringify(merged.annualArtworks || ["", "", "", "", "", ""]),
+    annual_artworks: JSON.stringify(normalizeAnnualArtworks(merged.annualArtworks)),
   });
   return true;
 }
@@ -249,7 +250,7 @@ function rowToCharacter(row: any): Character & { creatorNickname?: string } {
     portrait: row.portrait || "",
     outfits: JSON.parse(row.outfits || "[]") as OutfitSet[],
     artworks: JSON.parse(row.artworks || "[]") as Artwork[],
-    annualArtworks: JSON.parse(row.annual_artworks || "[]") as string[],
+    annualArtworks: normalizeAnnualArtworks(JSON.parse(row.annual_artworks || "[]") as string[]),
     creatorId: row.creator_id || "",
     creatorNickname: row.creator_nickname || undefined,
   };

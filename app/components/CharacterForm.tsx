@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Character, OutfitSet, Artwork } from "@/lib/characters";
+import { normalizeAnnualArtworks } from "@/lib/characters";
 
 interface FormProps {
   character: Character | null;
@@ -17,7 +18,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
     { id: "o2", name: "服设2", images: [] },
     { id: "o3", name: "服设3", images: [] },
   ]);
-  const [annualArtworks, setAnnualArtworks] = useState<string[]>(character?.annualArtworks || ["", "", "", "", "", ""]);
+  const [annualArtworks, setAnnualArtworks] = useState<string[]>(normalizeAnnualArtworks(character?.annualArtworks));
   const [artworks, setArtworks] = useState<Artwork[]>(character?.artworks || []);
   const [textForm, setTextForm] = useState({
     name: character?.name || "",
@@ -224,7 +225,7 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
           {/* 年度稿件 */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-600">年度稿件（6 格 4:3）</label>
+              <label className="text-sm font-medium text-gray-600">年度稿件（9 格 4:3，首页可导出九宫格）</label>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {annualArtworks.map((url, ai) => (

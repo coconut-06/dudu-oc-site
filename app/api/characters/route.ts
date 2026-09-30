@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllCharacters, createCharacter } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { normalizeAnnualArtworks } from "@/lib/characters";
 
 // 获取所有角色
 export async function GET() {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
       portrait: portrait || "",
       outfits: outfits || [],
       artworks: artworks || [],
-      annualArtworks: annualArtworks || ["", "", "", "", "", ""],
+      annualArtworks: normalizeAnnualArtworks(annualArtworks),
       creatorId: user.id,
     });
 

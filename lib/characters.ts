@@ -14,8 +14,16 @@ export interface Artwork {
 
 // ── 年度稿件 ──
 export interface AnnualArtwork {
-  id: string;       // 格子ID，固定 0-5
+  id: string;       // 格子ID，固定 0-8
   url: string;      // 图片URL，空字符串表示未上传
+}
+
+// 年度稿件固定 9 格（3×3 九宫格）
+export const ANNUAL_GRID_SIZE = 9;
+
+// 把任意长度的年度稿件数组补齐/截断为 9 格（兼容旧 6 格数据）
+export function normalizeAnnualArtworks(arr?: string[]): string[] {
+  return Array.from({ length: ANNUAL_GRID_SIZE }, (_, i) => arr?.[i] || "");
 }
 
 // ── 角色 ──
@@ -28,7 +36,7 @@ export interface Character {
   portrait: string;          // 立绘（人设整体图片）
   outfits: OutfitSet[];       // 服设套装（至少3套，可加）
   artworks: Artwork[];       // 稿件展示（最多9张，用于九宫格）
-  annualArtworks: string[];  // 年度稿件（固定6张，4:3比例）
+  annualArtworks: string[];  // 年度稿件（固定9张，4:3比例，3×3九宫格）
   creatorId: string;
 }
 
@@ -47,7 +55,7 @@ export const sampleCharacters: Character[] = [
       { id: "o3", name: "礼服", images: [] },
     ],
     artworks: [],
-    annualArtworks: ["", "", "", "", "", ""],
+    annualArtworks: ["", "", "", "", "", "", "", "", ""],
     creatorId: "",
   },
 ];
