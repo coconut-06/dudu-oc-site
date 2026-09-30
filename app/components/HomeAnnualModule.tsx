@@ -188,7 +188,7 @@ export default function HomeAnnualModule({ characters, user }: Props) {
   }, [artworks, selected.name]);
 
   return (
-    <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="mx-auto flex w-full max-w-sm flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       {/* 模块标题 */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold tracking-widest text-gray-400">年 度 稿 件</h2>
@@ -208,8 +208,8 @@ export default function HomeAnnualModule({ characters, user }: Props) {
       {/* 当前角色提示 */}
       <p className="mb-3 text-xs text-gray-300">{selected.name} 的年度稿件</p>
 
-      {/* 9 格年度稿件（3×3） */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* 9 格年度稿件（3×3，限宽后按比例缩小） */}
+      <div className="grid grid-cols-3 gap-1.5">
         {artworks.map((url, i) => (
           <div key={i} className="relative aspect-[3/4] overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
             {url ? (
