@@ -259,7 +259,7 @@ export default function HomeAnnualModule({ characters, user }: Props) {
             {exporting ? "导出中..." : "导出 4:3 九宫格"}
           </button>
           <p className="mt-1.5 text-xs text-gray-300">
-            将 {filledCount} 张年度稿件拼成 3×3 竖版大图（900×1200 PNG）
+            将 {filledCount} 张年度稿件拼成 4:3 竖版大图（900×1200 PNG）
           </p>
         </div>
       )}
