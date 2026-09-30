@@ -83,16 +83,16 @@ export default async function Home() {
                   )}
                 </div>
 
-                {/* 角色卡片列表：新建后直接展示在这里 */}
-                <div className="grid gap-5 sm:grid-cols-2">
+                {/* 角色卡片列表：居中展示在左侧区域中心，每张稍大 */}
+                <div className="flex flex-col items-center gap-6">
                   {characters.map((c) => (
                     <Link
                       key={c.id}
                       href={`/character/${c.id}`}
-                      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
+                      className="group relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
                     >
-                      {/* 立绘区域 — 完整展示 */}
-                      <div className="relative mb-5 flex h-44 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 via-pink-50/40 to-rose-50/40">
+                      {/* 立绘区域 — 完整展示（稍大） */}
+                      <div className="relative mb-5 flex h-56 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 via-pink-50/40 to-rose-50/40">
                         {c.portrait ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={c.portrait} alt={c.name} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
