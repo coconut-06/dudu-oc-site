@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "只能上传图片文件" }, { status: 400 });
     }
 
-    // 限制文件大小（5MB）
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "图片不能超过 5MB" }, { status: 400 });
+    // 限制文件大小（10MB）
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "图片不能超过 10MB" }, { status: 400 });
     }
 
     // 生成唯一文件名

@@ -56,9 +56,9 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* 左右对称分区：左侧角色模块 / 右侧年度稿件模块 */}
+      {/* 左右对称分区：左侧角色模块 / 右侧年度稿件模块（两栏内容垂直居中齐平） */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid items-center gap-8 lg:grid-cols-2">
           {/* ── 左侧：角色模块（新建角色 + 角色卡片展示） ── */}
           <div className="lg:col-span-1">
             {characters.length === 0 ? (

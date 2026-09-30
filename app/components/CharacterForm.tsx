@@ -225,11 +225,11 @@ export default function CharacterForm({ character, onSave, onCancel }: FormProps
           {/* 年度稿件 */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-600">年度稿件（9 格 4:3，首页可导出九宫格）</label>
+              <label className="text-sm font-medium text-gray-600">年度稿件（9 格竖版 4:3，首页可导出九宫格）</label>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {annualArtworks.map((url, ai) => (
-                <div key={ai} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                <div key={ai} className="relative aspect-[3/4] overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                   {url ? (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}

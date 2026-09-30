@@ -211,7 +211,7 @@ export default function HomeAnnualModule({ characters, user }: Props) {
       {/* 9 格年度稿件（3×3） */}
       <div className="grid grid-cols-3 gap-2">
         {artworks.map((url, i) => (
-          <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
+          <div key={i} className="relative aspect-[3/4] overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
             {url ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
