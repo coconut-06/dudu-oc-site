@@ -75,24 +75,26 @@ export default async function Home() {
               </div>
             ) : (
               <>
-                {/* 角色区头部：标题 + 新建角色按钮（按钮紧贴标题右侧） */}
-                <div className="mb-5 flex items-center gap-3">
-                  <h2 className="text-sm font-semibold tracking-widest text-gray-400">角 色 区</h2>
-                  {user && (
-                    <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />
-                  )}
-                </div>
+                {/* 整个左侧区域：标题栏与卡片垂直居中对齐 */}
+                <div className="flex min-h-[560px] flex-col justify-center">
+                  {/* 角色区头部：标题 + 新建角色按钮（与卡片同宽，在左栏居中） */}
+                  <div className="mx-auto mb-5 flex w-full max-w-lg items-center justify-center gap-3">
+                    <h2 className="text-sm font-semibold tracking-widest text-gray-400">角 色 区</h2>
+                    {user && (
+                      <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />
+                    )}
+                  </div>
 
-                {/* 角色卡片列表：居中展示在左侧区域中心，每张稍大 */}
+                {/* 角色卡片列表：居中展示在左侧区域中心，每张稍大（加长版） */}
                 <div className="flex flex-col items-center gap-6">
                   {characters.map((c) => (
                     <Link
                       key={c.id}
                       href={`/character/${c.id}`}
-                      className="group relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
+                      className="group relative w-full max-w-lg overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
                     >
-                      {/* 立绘区域 — 完整展示（稍大） */}
-                      <div className="relative mb-5 flex h-56 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 via-pink-50/40 to-rose-50/40">
+                      {/* 立绘区域 — 完整展示（加长） */}
+                      <div className="relative mb-5 flex h-72 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 via-pink-50/40 to-rose-50/40">
                         {c.portrait ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={c.portrait} alt={c.name} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
@@ -133,6 +135,7 @@ export default async function Home() {
                       </div>
                     </Link>
                   ))}
+                </div>
                 </div>
               </>
             )}

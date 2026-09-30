@@ -48,10 +48,33 @@ export default function HomeAnnualModule({ characters, user }: Props) {
   async function uploadImage(file: File): Promise<string> {
     const fd = new FormData();
     fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    if (data.url) return data.url;
-    throw new Error(data.error || "上传失败");
+    let res: Response;
+    try {
+      res = await fetch("/api/upload", { method: "POST", body: fd });
+    } catch {
+      throw new Error("无法连接上传接口，请检查网络后重试");
+    }
+    const data = await res.json().catch(() => null);
+    if (res.ok && data?.url) return data.url;
+    throw new Error(data?.error || `上传接口错误(${res.status})`);
+  }
+
+  async function saveArtworks(characterId: string, newArtworks: string[]): Promise<void> {
+    let res: Response;
+    try {
+      res = await fetch(`/api/characters/${characterId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ annualArtworks: newArtworks }),
+      });
+    } catch {
+      throw new Error("无法连接保存接口，请检查网络后重试");
+    }
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      const reason = data?.error || res.status === 401 ? "登录已过期，请重新登录" : `保存失败(${res.status})`;
+      throw new Error(reason);
+    }
   }
 
   async function handleUpload(idx: number, e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,17 +86,16 @@ export default function HomeAnnualModule({ characters, user }: Props) {
       const current = normalizeAnnualArtworks(artworksMap[selected.id]);
       const newArtworks = [...current];
       newArtworks[idx] = url;
-      setArtworksMap((prev) => ({ ...prev, [selected.id]: newArtworks }));
-      const res = await fetch(`/api/characters/${selected.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ annualArtworks: newArtworks }),
-      });
-      if (!res.ok) {
-        alert("保存失败，请重试");
+      try {
+        await saveArtworks(selected.id, newArtworks);
+        // 保存成功后才更新界面
+        setArtworksMap((prev) => ({ ...prev, [selected.id]: newArtworks }));
+      } catch (saveErr) {
+        // 保存失败：回滚界面，提示具体原因
+        alert(saveErr instanceof Error ? saveErr.message : "保存失败，请重试");
       }
-    } catch {
-      alert("上传失败");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "上传失败");
     }
     setUploading(null);
     e.target.value = "";
@@ -84,12 +106,12 @@ export default function HomeAnnualModule({ characters, user }: Props) {
     const current = normalizeAnnualArtworks(artworksMap[selected.id]);
     const newArtworks = [...current];
     newArtworks[idx] = "";
-    setArtworksMap((prev) => ({ ...prev, [selected.id]: newArtworks }));
-    await fetch(`/api/characters/${selected.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ annualArtworks: newArtworks }),
-    });
+    try {
+      await saveArtworks(selected.id, newArtworks);
+      setArtworksMap((prev) => ({ ...prev, [selected.id]: newArtworks }));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "删除失败，请重试");
+    }
   }
 
   // 导出 1:1 九宫格拼接图（1200×1200 PNG）
