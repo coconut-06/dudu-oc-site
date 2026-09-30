@@ -21,7 +21,7 @@ export default async function Home() {
     <main className="min-h-screen bg-white">
       {/* 顶部导航 */}
       <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-gray-800">DUDU</span>
           </div>
@@ -46,7 +46,7 @@ export default async function Home() {
       </nav>
 
       {/* 主视觉 */}
-      <section className="mx-auto max-w-5xl px-4 pb-8 pt-14 text-center">
+      <section className="mx-auto max-w-6xl px-4 pb-6 pt-12 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl">
           DUDU
         </h1>
@@ -55,80 +55,93 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* 新建角色 + 年度稿件 并排区域 */}
-      {user && characters.length > 0 && (
-        <section className="mx-auto max-w-5xl px-4 pb-10">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-            {/* 左侧：新建角色按钮 */}
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />
-            </div>
-            {/* 右侧：年度稿件展示模块 */}
-            <HomeAnnualModule characters={annualData} user={{ id: user.id, isAdmin: user.isAdmin }} />
-          </div>
-        </section>
-      )}
-
-      {/* 角色卡片列表 */}
-      <section className="mx-auto max-w-5xl px-4 pb-16">
-        {characters.length === 0 ? (
-          <p className="text-center text-gray-400">
-            {user ? "还没有角色，点击「新建角色」开始创建吧" : (
-              <span>还没有角色，<Link href="/register" className="text-pink-300 hover:underline">注册</Link>后开始创建吧</span>
-            )}
-          </p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {characters.map((c) => (
-              <Link
-                key={c.id}
-                href={`/character/${c.id}`}
-                className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
-              >
-                {/* 立绘区域 — 完整展示 */}
-                <div className="relative mb-5 flex h-40 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 via-pink-50/50 to-rose-50/50">
-                  {c.portrait ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={c.portrait} alt={c.name} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                  ) : (
-                    <span className="text-7xl font-black text-gray-200 transition-transform group-hover:scale-110">
-                      {c.name.charAt(0)}
-                    </span>
+      {/* 左右分区：左侧角色模块 / 右侧年度稿件模块 */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* ── 左侧：角色模块（新建角色 + 角色卡片展示） ── */}
+          <div className="lg:col-span-2">
+            {characters.length === 0 ? (
+              /* 空状态：整个区域居中显示新建角色按钮 */
+              <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
+                <p className="text-sm text-gray-400">
+                  {user ? "还没有角色，点击下方按钮创建第一个 OC 吧" : (
+                    <span>还没有角色，<Link href="/register" className="text-pink-300 hover:underline">注册</Link>后开始创建吧</span>
                   )}
-                  <span className="absolute right-2 top-2 rounded-full bg-white/80 px-2 py-0.5 text-xs text-gray-500">
-                    {c.age}岁
-                  </span>
+                </p>
+                {user ? (
+                  <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />
+                ) : null}
+              </div>
+            ) : (
+              <>
+                {/* 角色区头部：标题 + 新建角色按钮 */}
+                <div className="mb-5 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold tracking-widest text-gray-400">角 色 区</h2>
+                  {user && (
+                    <HomeActions user={{ id: user.id, username: user.username, nickname: user.nickname, isAdmin: user.isAdmin }} />
+                  )}
                 </div>
 
-                <h2 className="text-lg font-semibold text-gray-800">{c.name}</h2>
-                <p className="mt-0.5 text-sm text-pink-300">{c.anchor}</p>
-                <p className="mt-2 line-clamp-2 text-sm text-gray-400">{c.worldDescription}</p>
-
-                {/* 稿件预览 */}
-                {c.artworks.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {c.artworks.slice(0, 4).map((a, i) => (
-                      <div key={i} className="relative aspect-[4/3] w-14 overflow-hidden rounded-md border border-gray-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={a.url} alt="" className="h-full w-full object-cover" />
-                        {i === 3 && c.artworks.length > 4 && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs font-medium text-white">
-                            +{c.artworks.length - 4}
-                          </div>
+                {/* 角色卡片列表：新建后直接展示在这里 */}
+                <div className="grid gap-5 sm:grid-cols-2">
+                  {characters.map((c) => (
+                    <Link
+                      key={c.id}
+                      href={`/character/${c.id}`}
+                      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-pink-50"
+                    >
+                      {/* 立绘区域 — 完整展示 */}
+                      <div className="relative mb-5 flex h-44 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 via-pink-50/40 to-rose-50/40">
+                        {c.portrait ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={c.portrait} alt={c.name} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                        ) : (
+                          <span className="text-7xl font-black text-gray-200 transition-transform group-hover:scale-110">
+                            {c.name.charAt(0)}
+                          </span>
                         )}
+                        <span className="absolute right-2 top-2 rounded-full bg-white/80 px-2 py-0.5 text-xs text-gray-500">
+                          {c.age}岁
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                )}
 
-                <div className="mt-3 flex gap-3 text-xs text-gray-300">
-                  <span>服设 {c.outfits.length} 套</span>
-                  <span>稿件 {c.artworks.length} 张</span>
+                      <h3 className="text-lg font-semibold text-gray-800">{c.name}</h3>
+                      <p className="mt-0.5 text-sm text-pink-300">{c.anchor}</p>
+                      <p className="mt-2 line-clamp-2 text-sm text-gray-400">{c.worldDescription}</p>
+
+                      {/* 稿件预览 */}
+                      {c.artworks.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {c.artworks.slice(0, 4).map((a, i) => (
+                            <div key={i} className="relative aspect-[4/3] w-14 overflow-hidden rounded-md border border-gray-100">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={a.url} alt="" className="h-full w-full object-cover" />
+                              {i === 3 && c.artworks.length > 4 && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs font-medium text-white">
+                                  +{c.artworks.length - 4}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="mt-3 flex gap-3 text-xs text-gray-300">
+                        <span>服设 {c.outfits.length} 套</span>
+                        <span>稿件 {c.artworks.length} 张</span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
-            ))}
+              </>
+            )}
           </div>
-        )}
+
+          {/* ── 右侧：年度稿件模块（独立，一个角色对应一组年度稿件） ── */}
+          <div className="lg:col-span-1">
+            <HomeAnnualModule characters={annualData} user={user ? { id: user.id, isAdmin: user.isAdmin } : null} />
+          </div>
+        </div>
       </section>
 
       {/* 页脚 */}

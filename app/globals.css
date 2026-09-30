@@ -12,15 +12,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 强制纯白背景，禁用深色模式自动切换 */
+html {
+  background: #ffffff !important;
+  color-scheme: light only;
 }
 
 body {
-  background: var(--background);
+  background: #ffffff !important;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }

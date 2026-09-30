@@ -156,7 +156,7 @@ export function updateCharacter(id: string, c: Partial<Character>): boolean {
     name: merged.name,
     age: merged.age,
     anchor: merged.anchor,
-    worldDescription: merged.worldDescription,
+    world_description: merged.worldDescription,
     portrait: merged.portrait || "",
     outfits: JSON.stringify(merged.outfits || []),
     artworks: JSON.stringify(merged.artworks || []),

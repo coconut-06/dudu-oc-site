@@ -35,8 +35,8 @@ export default function HomeAnnualModule({ characters, user }: Props) {
   const selected = characters[selectedIdx];
   if (!selected) {
     return (
-      <div className="flex h-full min-h-[200px] items-center justify-center rounded-2xl border border-gray-200 bg-white p-5">
-        <p className="text-sm text-gray-300">暂无角色，请先创建角色</p>
+      <div className="flex min-h-[320px] items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white p-5">
+        <p className="text-sm text-gray-300">先创建角色后即可使用年度稿件</p>
       </div>
     );
   }
@@ -63,11 +63,14 @@ export default function HomeAnnualModule({ characters, user }: Props) {
       const newArtworks = [...current];
       newArtworks[idx] = url;
       setArtworksMap((prev) => ({ ...prev, [selected.id]: newArtworks }));
-      await fetch(`/api/characters/${selected.id}`, {
+      const res = await fetch(`/api/characters/${selected.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ annualArtworks: newArtworks }),
       });
+      if (!res.ok) {
+        alert("保存失败，请重试");
+      }
     } catch {
       alert("上传失败");
     }
@@ -89,20 +92,27 @@ export default function HomeAnnualModule({ characters, user }: Props) {
   }
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      {/* 模块标题 */}
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold tracking-widest text-gray-400">年 度 稿 件</h2>
-        {/* 角色选择器 */}
-        <select
-          value={selectedIdx}
-          onChange={(e) => setSelectedIdx(Number(e.target.value))}
-          className="rounded-lg border border-gray-200 px-2 py-1 text-xs text-gray-600 focus:border-pink-200 focus:outline-none"
-        >
-          {characters.map((c, i) => (
-            <option key={c.id} value={i}>{c.name}</option>
-          ))}
-        </select>
+        {characters.length > 1 && (
+          <select
+            value={selectedIdx}
+            onChange={(e) => setSelectedIdx(Number(e.target.value))}
+            className="rounded-lg border border-gray-200 px-2 py-1 text-xs text-gray-600 focus:border-pink-200 focus:outline-none"
+          >
+            {characters.map((c, i) => (
+              <option key={c.id} value={i}>{c.name}</option>
+            ))}
+          </select>
+        )}
       </div>
+
+      {/* 当前角色提示 */}
+      <p className="mb-3 text-xs text-gray-300">{selected.name} 的年度稿件</p>
+
+      {/* 6 格年度稿件 */}
       <div className="grid grid-cols-3 gap-2">
         {artworks.map((url, i) => (
           <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
@@ -141,6 +151,9 @@ export default function HomeAnnualModule({ characters, user }: Props) {
           </div>
         ))}
       </div>
+      {!canEdit && (
+        <p className="mt-3 text-center text-xs text-gray-300">登录后可上传管理</p>
+      )}
     </div>
   );
 }
