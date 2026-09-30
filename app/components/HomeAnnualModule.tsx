@@ -114,7 +114,7 @@ export default function HomeAnnualModule({ characters, user }: Props) {
     }
   }
 
-  // 导出 1:1 九宫格拼接图（1200×1200 PNG）
+  // 导出九宫格拼接图（每格竖版4:3，整体 3:4，与页面呈现一致）
   const handleExportGrid = useCallback(async () => {
     if (filledCount === 0) return;
     setExporting(true);
@@ -122,15 +122,15 @@ export default function HomeAnnualModule({ characters, user }: Props) {
       const canvas = canvasRef.current!;
       const ctx = canvas.getContext("2d")!;
 
-      // 每格 400px，总图 1200x1200（1:1）
-      const CELL = 400;
-      const SIZE = CELL * 3;
-      canvas.width = SIZE;
-      canvas.height = SIZE;
+      // 每格宽 300 高 400（竖版 4:3），总图 900宽×1200高，比例 3:4
+      const CELL_W = 300;
+      const CELL_H = 400;
+      canvas.width = CELL_W * 3;
+      canvas.height = CELL_H * 3;
 
       // 白色背景
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, SIZE, SIZE);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // 加载所有图片
       const images = await Promise.all(
@@ -147,25 +147,25 @@ export default function HomeAnnualModule({ characters, user }: Props) {
         )
       );
 
-      // 逐格绘制（cover 模式：等比裁剪填满正方形格子）
+      // 逐格绘制（cover 模式：等比裁剪填满竖版 4:3 格子）
       for (let i = 0; i < 9; i++) {
         const row = Math.floor(i / 3);
         const col = i % 3;
-        const x = col * CELL;
-        const y = row * CELL;
+        const x = col * CELL_W;
+        const y = row * CELL_H;
 
         if (images[i].ok) {
           const img = images[i].img;
-          const scale = Math.max(CELL / img.width, CELL / img.height);
+          const scale = Math.max(CELL_W / img.width, CELL_H / img.height);
           const sw = img.width;
           const sh = img.height;
           const dw = sw * scale;
           const dh = sh * scale;
-          ctx.drawImage(img, x + (CELL - dw) / 2, y + (CELL - dh) / 2, dw, dh);
+          ctx.drawImage(img, x + (CELL_W - dw) / 2, y + (CELL_H - dh) / 2, dw, dh);
         } else {
           // 空白格填充浅灰
           ctx.fillStyle = "#f3f4f6";
-          ctx.fillRect(x, y, CELL, CELL);
+          ctx.fillRect(x, y, CELL_W, CELL_H);
         }
       }
 
@@ -188,7 +188,7 @@ export default function HomeAnnualModule({ characters, user }: Props) {
   }, [artworks, selected.name]);
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="mx-auto flex w-full max-w-md flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       {/* 模块标题 */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold tracking-widest text-gray-400">年 度 稿 件</h2>
@@ -256,10 +256,10 @@ export default function HomeAnnualModule({ characters, user }: Props) {
             disabled={exporting}
             className="rounded-full bg-pink-200 px-5 py-2 text-sm font-medium text-pink-600 transition-colors hover:bg-pink-300 disabled:opacity-50"
           >
-            {exporting ? "导出中..." : "导出 1:1 九宫格"}
+            {exporting ? "导出中..." : "导出 4:3 九宫格"}
           </button>
           <p className="mt-1.5 text-xs text-gray-300">
-            将 {filledCount} 张年度稿件拼成 3×3 方形大图（1200×1200 PNG）
+            将 {filledCount} 张年度稿件拼成 3×3 竖版大图（900×1200 PNG）
           </p>
         </div>
       )}
